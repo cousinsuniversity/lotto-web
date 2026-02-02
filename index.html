@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wilyonaryo - Digital Lottery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Admin and TV buttons -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-dice"></i>
+                <h1>Wilyonaryo</h1>
+            </div>
+            <div class="header-actions">
+                <a href="admin.html" class="btn-admin">
+                    <i class="fas fa-user-shield"></i> Admin
+                </a>
+                <button id="tvModeBtn" class="btn-tv">
+                    <i class="fas fa-tv"></i> TV Mode
+                </button>
+            </div>
+        </header>
+
+        <!-- User Wallet Section -->
+        <section class="wallet-section">
+            <div class="wallet-balance">
+                <h3><i class="fas fa-wallet"></i> Your Wallet</h3>
+                <p class="balance-amount">₱ <span id="userBalance">0.00</span></p>
+                <button id="addFundsBtn" class="btn-small">
+                    <i class="fas fa-plus-circle"></i> Add Funds
+                </button>
+            </div>
+            <div class="draw-schedule">
+                <h3><i class="fas fa-clock"></i> Today's Draws</h3>
+                <div class="draw-times">
+                    <div class="draw-time" data-time="10:00">10:00 AM</div>
+                    <div class="draw-time" data-time="15:00">3:00 PM</div>
+                    <div class="draw-time" data-time="20:00">8:00 PM</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ticket Creation Section -->
+        <section class="ticket-section">
+            <h2><i class="fas fa-ticket-alt"></i> Create Your Ticket</h2>
+            <p class="ticket-price">Ticket Price: <span class="highlight">₱60.00</span> (3 chances per day)</p>
+            
+            <div class="ticket-form">
+                <!-- Letter Selection -->
+                <div class="form-group">
+                    <label>Select 4 Unique Letters (A-Z)</label>
+                    <div class="letter-selection">
+                        <div class="letter-input-group">
+                            <div class="letter-input-container">
+                                <input type="text" maxlength="1" class="letter-input" placeholder="A" data-index="0">
+                            </div>
+                            <div class="letter-input-container">
+                                <input type="text" maxlength="1" class="letter-input" placeholder="B" data-index="1">
+                            </div>
+                            <div class="letter-input-container">
+                                <input type="text" maxlength="1" class="letter-input" placeholder="C" data-index="2">
+                            </div>
+                            <div class="letter-input-container">
+                                <input type="text" maxlength="1" class="letter-input" placeholder="D" data-index="3">
+                            </div>
+                        </div>
+                        <div class="letter-validation" id="letterValidation">
+                            <i class="fas fa-check-circle"></i> All letters are unique
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color Selection -->
+                <div class="form-group">
+                    <label>Select One Color</label>
+                    <div class="color-selection">
+                        <div class="color-option" data-color="red" style="background-color: #FF6B6B;"></div>
+                        <div class="color-option" data-color="blue" style="background-color: #4D96FF;"></div>
+                        <div class="color-option" data-color="green" style="background-color: #6BCF7F;"></div>
+                        <div class="color-option" data-color="yellow" style="background-color: #FFD166;"></div>
+                        <div class="color-option" data-color="purple" style="background-color: #9D65C9;"></div>
+                        <div class="color-option" data-color="orange" style="background-color: #FF8C42;"></div>
+                        <div class="color-option" data-color="pink" style="background-color: #FF9FDE;"></div>
+                        <div class="color-option" data-color="teal" style="background-color: #2EC4B6;"></div>
+                        <div class="color-option" data-color="brown" style="background-color: #A86464;"></div>
+                        <div class="color-option" data-color="gray" style="background-color: #8A8A8A;"></div>
+                        <div class="color-option" data-color="black" style="background-color: #2D2D2D;"></div>
+                        <div class="color-option" data-color="cyan" style="background-color: #00C1D4;"></div>
+                    </div>
+                    <div class="selected-color-display">
+                        Selected Color: <span id="selectedColorDisplay">None</span>
+                    </div>
+                </div>
+
+                <!-- Ticket Summary -->
+                <div class="ticket-summary">
+                    <h4>Your Ticket Summary</h4>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <span>Letters:</span>
+                            <strong id="summaryLetters">----</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Color:</span>
+                            <strong id="summaryColor">---</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Price:</span>
+                            <strong>₱60.00</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="purchaseTicketBtn" class="btn-purchase" disabled>
+                    <i class="fas fa-shopping-cart"></i> Purchase Ticket (₱60.00)
+                </button>
+            </div>
+        </section>
+
+        <!-- Current Tickets Section -->
+        <section class="my-tickets-section">
+            <h2><i class="fas fa-tickets"></i> My Tickets</h2>
+            <div class="tickets-container" id="ticketsContainer">
+                <div class="empty-tickets">
+                    <i class="fas fa-ticket-alt"></i>
+                    <p>No tickets purchased yet</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Draws Section -->
+        <section class="draws-section">
+            <h2><i class="fas fa-trophy"></i> Recent Draws</h2>
+            <div class="draws-container" id="drawsContainer">
+                <div class="draw-card">
+                    <div class="draw-time">10:00 AM</div>
+                    <div class="draw-result">
+                        <div class="draw-letters">X G T M</div>
+                        <div class="draw-color" style="background-color: #FF6B6B;"></div>
+                    </div>
+                    <div class="draw-winners">
+                        <i class="fas fa-crown"></i> Jackpot: ₱1,200,450.00
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prize Structure Info -->
+        <section class="prize-info">
+            <h3><i class="fas fa-award"></i> Prize Structure</h3>
+            <div class="prize-levels">
+                <div class="prize-level jackpot">
+                    <h4>Grand Jackpot</h4>
+                    <p>Match all 4 letters in exact order + correct color</p>
+                    <p class="prize-amount">Starts at ₱1,000,000.00</p>
+                </div>
+                <div class="prize-level consolation-a">
+                    <h4>Consolation A</h4>
+                    <p>Match all 4 letters in order (wrong color)</p>
+                    <p class="prize-amount">₱50,000.00</p>
+                </div>
+                <div class="prize-level consolation-b">
+                    <h4>Consolation B</h4>
+                    <p>Correct color (any letters)</p>
+                    <p class="prize-amount">₱5,000.00</p>
+                </div>
+            </div>
+            <div class="tax-notice">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Note: Prizes over ₱10,000.00 are subject to 20% withholding tax under the TRAIN Law</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modals -->
+    <div id="addFundsModal" class="modal">
+        <div class="modal-content">
+            <h3>Add Funds to Wallet</h3>
+            <div class="fund-options">
+                <button class="fund-option" data-amount="100">₱100</button>
+                <button class="fund-option" data-amount="300">₱300</button>
+                <button class="fund-option" data-amount="500">₱500</button>
+                <button class="fund-option" data-amount="1000">₱1,000</button>
+                <button class="fund-option" data-amount="2000">₱2,000</button>
+                <button class="fund-option" data-amount="5000">₱5,000</button>
+            </div>
+            <div class="custom-amount">
+                <input type="number" id="customAmount" placeholder="Custom Amount" min="60" step="10">
+                <button id="addCustomAmount">Add</button>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary close-modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="purchaseModal" class="modal">
+        <div class="modal-content">
+            <h3>Confirm Ticket Purchase</h3>
+            <div class="purchase-details">
+                <p>Your ticket: <strong id="confirmLetters">----</strong></p>
+                <p>Color: <strong id="confirmColor">---</strong></p>
+                <p>Price: <strong>₱60.00</strong></p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary close-modal">Cancel</button>
+                <button id="confirmPurchaseBtn" class="btn-primary">Confirm Purchase</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
