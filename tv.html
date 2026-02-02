@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wilyonaryo - TV Display</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* TV Display Specific Styles */
+        body {
+            background: linear-gradient(135deg, #1A1A2E, #2D2D57);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .tv-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .tv-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tv-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #FF9A00, #FF6B6B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        .tv-header p {
+            font-size: 1.5rem;
+            color: #AAA;
+            margin-bottom: 20px;
+        }
+        
+        .current-time {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #4D96FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .draw-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .draw-card-tv {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .draw-card-tv:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .draw-card-tv::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #FF6B6B, #4D96FF, #6BCF7F);
+        }
+        
+        .draw-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #FFD166;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .draw-result-tv {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+        
+        .letters-display {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: 10px;
+            color: white;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .color-display-tv {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border: 5px solid white;
+        }
+        
+        .draw-info {
+            display: flex;
+            justify-content: space-between;
+            color: #AAA;
+            font-size: 1.1rem;
+        }
+        
+        .next-draw-countdown {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+        }
+        
+        .countdown-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #FFD166;
+        }
+        
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .countdown-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .countdown-value {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #4D96FF;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .countdown-label {
+            font-size: 1.2rem;
+            color: #AAA;
+            margin-top: 10px;
+        }
+        
+        .recent-winners {
+            margin-bottom: 50px;
+        }
+        
+        .winners-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: #FFD166;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .winners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .winner-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            border-left: 5px solid #FFD166;
+        }
+        
+        .winner-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(10px);
+        }
+        
+        .winner-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4D96FF, #9D65C9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .winner-info h4 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .winner-prize {
+            color: #6BCF7F;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        .jackpot-display {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(255, 154, 0, 0.2), rgba(255, 107, 107, 0.2));
+            border-radius: 25px;
+            margin-bottom: 50px;
+            border: 3px solid rgba(255, 154, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .jackpot-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M50,5 L60,35 L90,35 L65,55 L75,85 L50,65 L25,85 L35,55 L10,35 L40,35 Z" fill="rgba(255, 215, 102, 0.1)"/></svg>');
+            background-size: 100px;
+            opacity: 0.3;
+        }
+        
+        .jackpot-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #FFD166;
+        }
+        
+        .jackpot-amount {
+            font-size: 5rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .jackpot-subtitle {
+            font-size: 1.5rem;
+            color: #AAA;
+        }
+        
+        /* Animation for letters */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .letter-animated {
+            display: inline-block;
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        .letter-animated:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .letter-animated:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .letter-animated:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+        
+        /* Responsive TV styles */
+        @media (max-width: 1024px) {
+            .draw-display {
+                grid-template-columns: 1fr;
+            }
+            
+            .letters-display {
+                font-size: 3rem;
+            }
+            
+            .jackpot-amount {
+                font-size: 4rem;
+            }
+            
+            .countdown-value {
+                font-size: 3rem;
+                min-width: 80px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tv-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .letters-display {
+                font-size: 2.5rem;
+                letter-spacing: 5px;
+            }
+            
+            .draw-result-tv {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .countdown-timer {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .countdown-value {
+                font-size: 2.5rem;
+                min-width: 70px;
+            }
+            
+            .jackpot-amount {
+                font-size: 3rem;
+            }
+            
+            .winners-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .tv-header h1 {
+                font-size: 2rem;
+            }
+            
+            .letters-display {
+                font-size: 2rem;
+            }
+            
+            .color-display-tv {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .jackpot-amount {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tv-container">
+        <!-- TV Header -->
+        <header class="tv-header">
+            <h1><i class="fas fa-dice"></i> Wilyonaryo Live Draw</h1>
+            <p>Official Lottery Draw Results - Broadcast Live</p>
+            <div class="current-time">
+                <i class="fas fa-clock"></i>
+                <span id="currentTime">Loading...</span>
+            </div>
+        </header>
+        
+        <!-- Current Jackpot Display -->
+        <section class="jackpot-display">
+            <h2 class="jackpot-title">Current Grand Jackpot</h2>
+            <div class="jackpot-amount" id="tvJackpotAmount">₱1,523,780.00</div>
+            <p class="jackpot-subtitle">Match 4 letters in exact order + correct color to win!</p>
+        </section>
+        
+        <!-- Draw Results Display -->
+        <section class="draw-display">
+            <div class="draw-card-tv">
+                <h3 class="draw-title"><i class="fas fa-sun"></i> Morning Draw (10:00 AM)</h3>
+                <div class="draw-result-tv">
+                    <div class="letters-display" id="tvDraw1Letters">
+                        <span class="letter-animated">X</span>
+                        <span class="letter-animated">G</span>
+                        <span class="letter-animated">T</span>
+                        <span class="letter-animated">M</span>
+                    </div>
+                    <div class="color-display-tv" id="tvDraw1Color" style="background-color: #FF6B6B;"></div>
+                </div>
+                <div class="draw-info">
+                    <span><i class="fas fa-check-circle"></i> Completed</span>
+                    <span><i class="fas fa-users"></i> 12 Winners</span>
+                </div>
+            </div>
+            
+            <div class="draw-card-tv">
+                <h3 class="draw-title"><i class="fas fa-cloud-sun"></i> Afternoon Draw (3:00 PM)</h3>
+                <div class="draw-result-tv">
+                    <div class="letters-display" id="tvDraw2Letters">
+                        <span class="letter-animated">-</span>
+                        <span class="letter-animated">-</span>
+                        <span class="letter-animated">-</span>
+                        <span class="letter-animated">-</span>
+                    </div>
+                    <div class="color-display-tv" id="tvDraw2Color" style="background-color: #DDD;"></div>
+                </div>
+                <div class="draw-info">
+                    <span><i class="fas fa-clock"></i> Next Draw</span>
+                    <span><i class="fas fa-ticket-alt"></i> 8,432 Tickets</span>
+                </div>
+            </div>
+            
+            <div class="draw-card-tv">
+                <h3 class="draw-title"><i class="fas fa-moon"></i> Evening Draw (8:00 PM)</h3>
+                <div class="draw-result-tv">
+                    <div class="letters-display" id="tvDraw3Letters">
+                        <span class="letter-animated">-</span>
+                        <span class="letter-animated">-</span>
+                        <span class="letter-animated">-</span>
+                        <span class="letter-animated">-</span>
+                    </div>
+                    <div class="color-display-tv" id="tvDraw3Color" style="background-color: #DDD;"></div>
+                </div>
+                <div class="draw-info">
+                    <span><i class="fas fa-clock"></i> Upcoming</span>
+                    <span><i class="fas fa-ticket-alt"></i> 5,921 Tickets</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Next Draw Countdown -->
+        <section class="next-draw-countdown">
+            <h3 class="countdown-title">Next Draw In:</h3>
+            <div class="countdown-timer">
+                <div class="countdown-unit">
+                    <div class="countdown-value" id="countdownHours">02</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-unit">
+                    <div class="countdown-value" id="countdownMinutes">45</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+                <div class="countdown-unit">
+                    <div class="countdown-value" id="countdownSeconds">18</div>
+                    <div class="countdown-label">Seconds</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Recent Winners -->
+        <section class="recent-winners">
+            <h3 class="winners-title"><i class="fas fa-crown"></i> Recent Winners</h3>
+            <div class="winners-grid" id="winnersGrid">
+                <div class="winner-card">
+                    <div class="winner-avatar">J</div>
+                    <div class="winner-info">
+                        <h4>Juan Dela Cruz</h4>
+                        <p>Won <span class="winner-prize">Consolation A - ₱50,000.00</span></p>
+                        <p>Morning Draw • Letters: X G T M • Color: Red</p>
+                    </div>
+                </div>
+                <div class="winner-card">
+                    <div class="winner-avatar">M</div>
+                    <div class="winner-info">
+                        <h4>Maria Santos</h4>
+                        <p>Won <span class="winner-prize">Consolation B - ₱5,000.00</span></p>
+                        <p>Yesterday • Letters: A B C D • Color: Blue</p>
+                    </div>
+                </div>
+                <div class="winner-card">
+                    <div class="winner-avatar">R</div>
+                    <div class="winner-info">
+                        <h4>Roberto Garcia</h4>
+                        <p>Won <span class="winner-prize">Consolation B - ₱5,000.00</span></p>
+                        <p>Nov 15 • Letters: L K J H • Color: Green</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // TV Display JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update current time
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-PH', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            // Update time immediately and every second
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Countdown timer for next draw
+            function updateCountdown() {
+                const now = new Date();
+                let nextDraw = new Date();
+                
+                // Determine next draw time
+                if (now.getHours() < 15) {
+                    // Next draw is 3:00 PM
+                    nextDraw.setHours(15, 0, 0, 0);
+                } else if (now.getHours() < 20) {
+                    // Next draw is 8:00 PM
+                    nextDraw.setHours(20, 0, 0, 0);
+                } else {
+                    // Next draw is tomorrow 10:00 AM
+                    nextDraw.setDate(nextDraw.getDate() + 1);
+                    nextDraw.setHours(10, 0, 0, 0);
+                }
+                
+                const diff = nextDraw - now;
+                
+                // Calculate hours, minutes, seconds
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                // Update display
+                document.getElementById('countdownHours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('countdownMinutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('countdownSeconds').textContent = seconds.toString().padStart(2, '0');
+            }
+            
+            // Update countdown immediately and every second
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+            
+            // Simulate draw updates (in a real app, this would come from a server)
+            function simulateDrawUpdates() {
+                // Randomly update afternoon or evening draw
+                const now = new Date();
+                const hour = now.getHours();
+                
+                // If it's past 3 PM, show afternoon draw as completed
+                if (hour >= 15 && hour < 20) {
+                    const letters = generateRandomLetters();
+                    const color = getRandomColor();
+                    
+                    document.getElementById('tvDraw2Letters').innerHTML = `
+                        <span class="letter-animated">${letters[0]}</span>
+                        <span class="letter-animated">${letters[1]}</span>
+                        <span class="letter-animated">${letters[2]}</span>
+                        <span class="letter-animated">${letters[3]}</span>
+                    `;
+                    document.getElementById('tvDraw2Color').style.backgroundColor = color.hex;
+                    
+                    // Update draw info
+                    const drawCard = document.querySelectorAll('.draw-card-tv')[1];
+                    drawCard.querySelector('.draw-info').innerHTML = `
+                        <span><i class="fas fa-check-circle"></i> Completed</span>
+                        <span><i class="fas fa-users"></i> ${Math.floor(Math.random() * 20) + 5} Winners</span>
+                    `;
+                }
+                
+                // If it's past 8 PM, show evening draw as completed
+                if (hour >= 20 || hour < 10) {
+                    const letters = generateRandomLetters();
+                    const color = getRandomColor();
+                    
+                    document.getElementById('tvDraw3Letters').innerHTML = `
+                        <span class="letter-animated">${letters[0]}</span>
+                        <span class="letter-animated">${letters[1]}</span>
+                        <span class="letter-animated">${letters[2]}</span>
+                        <span class="letter-animated">${letters[3]}</span>
+                    `;
+                    document.getElementById('tvDraw3Color').style.backgroundColor = color.hex;
+                    
+                    // Update draw info
+                    const drawCard = document.querySelectorAll('.draw-card-tv')[2];
+                    drawCard.querySelector('.draw-info').innerHTML = `
+                        <span><i class="fas fa-check-circle"></i> Completed</span>
+                        <span><i class="fas fa-users"></i> ${Math.floor(Math.random() * 20) + 5} Winners</span>
+                    `;
+                }
+                
+                // Update jackpot amount randomly
+                const jackpotElement = document.getElementById('tvJackpotAmount');
+                let jackpot = parseFloat(jackpotElement.textContent.replace(/[^0-9.-]+/g, ''));
+                jackpot += Math.floor(Math.random() * 10000) + 5000;
+                jackpotElement.textContent = `₱${jackpot.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
+            }
+            
+            // Helper functions
+            function generateRandomLetters() {
+                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                let result = '';
+                let usedIndices = new Set();
+                
+                while (result.length < 4) {
+                    const randomIndex = Math.floor(Math.random() * letters.length);
+                    if (!usedIndices.has(randomIndex)) {
+                        result += letters[randomIndex];
+                        usedIndices.add(randomIndex);
+                    }
+                }
+                
+                return result;
+            }
+            
+            function getRandomColor() {
+                const colors = [
+                    { name: 'red', hex: '#FF6B6B' },
+                    { name: 'blue', hex: '#4D96FF' },
+                    { name: 'green', hex: '#6BCF7F' },
+                    { name: 'yellow', hex: '#FFD166' },
+                    { name: 'purple', hex: '#9D65C9' },
+                    { name: 'orange', hex: '#FF8C42' },
+                    { name: 'pink', hex: '#FF9FDE' },
+                    { name: 'teal', hex: '#2EC4B6' },
+                    { name: 'brown', hex: '#A86464' },
+                    { name: 'gray', hex: '#8A8A8A' },
+                    { name: 'black', hex: '#2D2D2D' },
+                    { name: 'cyan', hex: '#00C1D4' }
+                ];
+                
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            // Simulate updates every 30 seconds
+            setInterval(simulateDrawUpdates, 30000);
+            
+            // Initial update
+            simulateDrawUpdates();
+            
+            // Add a new winner every minute
+            function addNewWinner() {
+                const names = ['Juan', 'Maria', 'Pedro', 'Ana', 'Luis', 'Sofia', 'Carlos', 'Elena', 'Jose', 'Carmen'];
+                const surnames = ['Dela Cruz', 'Santos', 'Garcia', 'Reyes', 'Ramos', 'Aquino', 'Mendoza', 'Torres', 'Fernandez', 'Gonzales'];
+                const prizeTypes = ['Consolation A', 'Consolation B'];
+                const prizeAmounts = {
+                    'Consolation A': '₱50,000.00',
+                    'Consolation B': '₱5,000.00'
+                };
+                
+                const randomName = names[Math.floor(Math.random() * names.length)];
+                const randomSurname = surnames[Math.floor(Math.random() * surnames.length)];
+                const randomPrizeType = prizeTypes[Math.floor(Math.random() * prizeTypes.length)];
+                const randomPrizeAmount = prizeAmounts[randomPrizeType];
+                
+                const letters = generateRandomLetters();
+                const color = getRandomColor();
+                
+                const newWinner = document.createElement('div');
+                newWinner.className = 'winner-card';
+                newWinner.innerHTML = `
+                    <div class="winner-avatar">${randomName[0]}</div>
+                    <div class="winner-info">
+                        <h4>${randomName} ${randomSurname}</h4>
+                        <p>Won <span class="winner-prize">${randomPrizeType} - ${randomPrizeAmount}</span></p>
+                        <p>Just Now • Letters: ${letters.split('').join(' ')} • Color: ${color.name.charAt(0).toUpperCase() + color.name.slice(1)}</p>
+                    </div>
+                `;
+                
+                const winnersGrid = document.getElementById('winnersGrid');
+                winnersGrid.insertBefore(newWinner, winnersGrid.firstChild);
+                
+                // Remove the last winner if there are more than 3
+                if (winnersGrid.children.length > 3) {
+                    winnersGrid.removeChild(winnersGrid.lastChild);
+                }
+            }
+            
+            // Add a new winner every 2 minutes
+            setInterval(addNewWinner, 120000);
+        });
+    </script>
+</body>
+</html>
